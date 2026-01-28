@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   web-prod:
     image: node:18-alpine
