@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  web-prod:
+    image: node:18-alpine
+    container_name: web-prod
+    working_dir: /app
+    command: sh -c "npm install && npm run build && npx serve -s dist -l 3000"
+    restart: unless-stopped
+    environment:
+      - VIRTUAL_HOST=chio&nico.rednox.org
+      - LETSENCRYPT_HOST=chio&nico.rednox.org
+      - VIRTUAL_PORT=3000
+    volumes:
+      - ./app:/app
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
