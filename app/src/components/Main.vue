@@ -876,6 +876,33 @@ p {
   }
 }
 
+@media (min-width: 861px) {
+  .page {
+    padding-top: calc(22% + 16px);
+  }
+
+  .page.stack {
+    align-items: center;
+  }
+
+  #p1 {
+    padding-bottom: 12%;
+  }
+
+  #p3 {
+    padding-top: 20%;
+  }
+
+  #p4 {
+    padding-top: 18%;
+  }
+
+  .stack-wrap {
+    margin: 0 auto;
+    gap: 24px;
+  }
+}
+
 /* ============ Reduced motion ============ */
 @media (prefers-reduced-motion: reduce) {
   #app {
