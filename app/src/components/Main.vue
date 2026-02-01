@@ -44,8 +44,8 @@
 
       <article class="card">
         <div class="card-inner">
-          <div class="grid">
-            <div>
+          <div class="grid hero-grid">
+            <div class="hero-content">
               <div class="typewriter">
                 <h1 ref="typewriterRef" class="tw"></h1>
               </div>
@@ -73,6 +73,12 @@
                     ><span>Min</span>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+              <div class="hero-visual-frame">
+                <img :src="teEsperamos" alt="" />
               </div>
             </div>
           </div>
@@ -620,21 +626,6 @@ nav a.active {
   padding: clamp(18px, 3.2vw, 34px);
 }
 
-.verse-page {
-  background:
-    radial-gradient(
-      120% 120% at 40% 10%,
-      rgba(126, 224, 210, 0.08),
-      transparent 55%
-    ),
-    radial-gradient(
-      140% 140% at 80% 80%,
-      rgba(217, 178, 110, 0.12),
-      transparent 60%
-    ),
-    rgba(0, 0, 0, 0.02);
-}
-
 .verse-card {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(217, 178, 110, 0.24);
@@ -721,6 +712,45 @@ p {
   grid-template-columns: 1.15fr 0.85fr;
   gap: 18px;
   align-items: stretch;
+}
+
+.hero-grid {
+  gap: 16px;
+  align-items: center;
+}
+
+.hero-content {
+  display: grid;
+  gap: 14px;
+}
+
+.hero-visual {
+  display: none;
+}
+
+.hero-visual-frame {
+  position: relative;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.hero-visual-frame::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: inherit;
+  border: 1px dashed rgba(217, 178, 110, 0.35);
+  pointer-events: none;
+}
+
+.hero-visual img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.32));
 }
 
 #typewriter {
@@ -1145,6 +1175,10 @@ p {
     align-items: center;
   }
 
+  .diag img {
+    width: 42%;
+  }
+
   #p1 {
     padding-bottom: 20%;
   }
@@ -1160,6 +1194,115 @@ p {
   .stack-wrap {
     margin: 0 auto;
     gap: 24px;
+  }
+}
+
+@media (min-width: 1040px) {
+  :root {
+    --maxw: 1140px;
+    --pad: clamp(22px, 2vw, 34px);
+  }
+
+  header {
+    padding: 18px 28px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    max-width: calc(var(--maxw) + 40px);
+  }
+
+  nav {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  nav a {
+    font-size: 13px;
+    padding: 9px 14px;
+  }
+
+  #scroller {
+    scroll-padding-top: 104px;
+  }
+
+  .page {
+    padding: calc(14% + 16px) var(--pad) calc(14% + 18px);
+  }
+
+  .verse-page {
+    padding-top: calc(14% + 14px);
+  }
+
+  .hero-grid {
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(22px, 3vw, 38px);
+    align-items: stretch;
+  }
+
+  .hero-content {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .hero-visual {
+    display: block;
+    align-self: stretch;
+  }
+
+  .hero-visual-frame {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(18px, 2vw, 28px);
+  }
+
+  .hero-visual img {
+    max-width: min(520px, 90%);
+  }
+
+  .stack-wrap {
+    gap: 32px;
+  }
+
+  .invite-dateRow,
+  .invite-details {
+    max-width: 880px;
+  }
+}
+
+@media (min-width: 1400px) {
+  :root {
+    --maxw: 1280px;
+    --pad: clamp(26px, 1.8vw, 40px);
+  }
+
+  .page {
+    padding-top: 12%;
+    padding-bottom: 12%;
+  }
+
+  .verse-page {
+    min-height: 78vh;
+  }
+
+  #p1 {
+    padding-bottom: 14%;
+  }
+  #p2 {
+    padding: 9% 24%;
+  }
+
+  .diag img {
+    width: 30%;
+  }
+  .diag .trbl[data-v-3fa90f43] {
+    top: 36%;
+    right: 0;
   }
 }
 
