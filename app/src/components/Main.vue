@@ -72,27 +72,28 @@
 
         <article class="card">
           <div class="card-inner">
-            <h2 style="text-align: center">
+            <h2 style="text-align: center; color: var(--accent)">
               Con la bendición de nuestros padres
             </h2>
             <div class="divider"></div>
 
-            <div
-              class="grid"
-              style="grid-template-columns: 1fr 1fr; text-align: center"
-            >
-              <div class="panel">
-                <p class="miniTitle">Padres de la Novia</p>
-                <p style="margin: 4px 0 0">José Cazarin Linarez</p>
-                <p style="margin: 4px 0 0">&</p>
-                <p style="margin: 4px 0 0">Candelaria Parada Domínguez</p>
+            <div class="grid parents-grid" aria-label="Padres de los novios">
+              <div class="panel-padres parent-panel">
+                <p class="miniTitle parent-title">Padres de la Novia</p>
+                <div class="parent-names">
+                  <span>José Cazarin Linarez</span>
+                  <span class="ampersand">&</span>
+                  <span>Candelaria Parada Domínguez</span>
+                </div>
               </div>
 
-              <div class="panel">
-                <p class="miniTitle">Padres del Novio</p>
-                <p style="margin: 4px 0 0">Nicolás Nieves Heredia</p>
-                <p style="margin: 4px 0 0">&</p>
-                <p style="margin: 4px 0 0">María Isabel Santos Prieto</p>
+              <div class="panel-padres parent-panel">
+                <p class="miniTitle parent-title">Padres del Novio</p>
+                <div class="parent-names">
+                  <span>Nicolás Nieves Heredia</span>
+                  <span class="ampersand">&</span>
+                  <span>María Isabel Santos Prieto</span>
+                </div>
               </div>
             </div>
 
@@ -153,6 +154,18 @@
   </main>
 
   <div class="fab" aria-label="Acciones rápidas">
+    <button
+      class="chip music-chip"
+      type="button"
+      :aria-pressed="isPlaying"
+      :data-locked="!musicUnlocked"
+      @click="toggleMusic"
+    >
+      <span aria-hidden="true">{{ isPlaying ? "⏸" : "▶" }}</span>
+      <span>{{ isPlaying ? "Pausar música" : "Reproducir música" }}</span>
+      <small v-if="!musicUnlocked" class="chip-sub">Toca una vez para activar</small>
+    </button>
+
     <a class="chip" href="#p1" title="Volver arriba">Arriba</a>
   </div>
 
@@ -185,6 +198,11 @@ const activePage = ref("p1");
 const d = ref("—");
 const h = ref("—");
 const m = ref("—");
+
+const musicUnlocked = ref(false);
+const isPlaying = ref(false);
+let audioEl = null;
+let unlockHandlers = [];
 
 let countdownTimer = null;
 let io = null;
@@ -327,6 +345,68 @@ const formatCountdown = () => {
   m.value = String(minutes).padStart(2, "0");
 };
 
+// ===== Música de fondo =====
+const cleanupUnlockListeners = () => {
+  unlockHandlers.forEach(({ evt, handler }) =>
+    window.removeEventListener(evt, handler),
+  );
+  unlockHandlers = [];
+};
+
+const tryPlay = async () => {
+  if (!audioEl) return;
+  try {
+    await audioEl.play();
+    musicUnlocked.value = true;
+    cleanupUnlockListeners();
+  } catch (err) {
+    musicUnlocked.value = false;
+    if (!isPlaying.value) {
+      showToast("Toca la pantalla para activar el audio");
+    }
+    console.warn("No se pudo iniciar la música:", err);
+  }
+};
+
+const bindUnlockListeners = () => {
+  const evts = ["pointerdown", "touchstart", "click", "keydown", "scroll"];
+  evts.forEach((evt) => {
+    const handler = () => {
+      tryPlay();
+    };
+    unlockHandlers.push({ evt, handler });
+    window.addEventListener(evt, handler, { once: true, passive: true });
+  });
+};
+
+const setupAudio = () => {
+  audioEl = new Audio("/musica-invitacion.mp3");
+  audioEl.loop = true;
+  audioEl.preload = "auto";
+  audioEl.volume = 0.7;
+
+  audioEl.addEventListener("play", () => {
+    isPlaying.value = true;
+    musicUnlocked.value = true;
+  });
+
+  audioEl.addEventListener("pause", () => {
+    isPlaying.value = false;
+  });
+
+  bindUnlockListeners();
+  tryPlay();
+};
+
+const toggleMusic = () => {
+  if (!audioEl) return;
+  if (audioEl.paused) {
+    tryPlay();
+  } else {
+    audioEl.pause();
+  }
+};
+
 // ===== Lifecycle =====
 onMounted(() => {
   runTypewriter();
@@ -334,11 +414,18 @@ onMounted(() => {
 
   formatCountdown();
   countdownTimer = setInterval(formatCountdown, 1000 * 30);
+
+  setupAudio();
 });
 
 onBeforeUnmount(() => {
   if (io) io.disconnect();
   if (countdownTimer) clearInterval(countdownTimer);
+  cleanupUnlockListeners();
+  if (audioEl) {
+    audioEl.pause();
+    audioEl.src = "";
+  }
 });
 </script>
 
@@ -444,7 +531,7 @@ nav a.active {
 }
 
 #p3 {
-  padding-top: 40%;
+  padding-top: 0%;
 }
 
 #p4 {
@@ -597,6 +684,51 @@ p {
   background: rgba(0, 0, 0, 0.18);
   padding: 16px;
 }
+.panel-padres {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px;
+}
+.parents-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.parent-panel {
+  position: relative;
+}
+
+.parent-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 15% 10%, rgba(217, 178, 110, 0.18), transparent 50%);
+  pointer-events: none;
+}
+
+.parent-title {
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 0;
+}
+
+.parent-names {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.parent-names .ampersand {
+  font-family: "Great Vibes", cursive;
+  font-size: 26px;
+  color: inherit;
+  line-height: 1;
+}
 
 .divider {
   height: 1px;
@@ -670,6 +802,7 @@ p {
 
 .invite-title {
   margin-top: 0;
+  color: var(--accent);
 }
 
 .invite-sub {
@@ -786,6 +919,8 @@ p {
   text-align: center;
   color: #d9b26e;
   font-style: italic;
+  font-size: clamp(42px, 7vw, 86px);
+  line-height: 1.05;
 }
 
 .tw span {
@@ -831,17 +966,58 @@ p {
   inset: auto 16px 16px auto;
   z-index: 55;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
-  align-items: flex-end;
+  align-items: center;
+}
+
+.music-chip {
+  align-items: flex-start;
+  gap: 4px;
+  background: rgba(217, 178, 110, 0.22);
+  color: #0a0a0a;
+  border-color: rgba(217, 178, 110, 0.45);
+}
+
+.music-chip[data-locked="true"] {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.chip-sub {
+  display: block;
+  font-size: 11px;
+  opacity: 0.8;
+  letter-spacing: 0.05em;
+}
+
+.music-chip span:first-child {
+  font-size: 14px;
+}
+
+.chip:not(.music-chip) {
+  background: rgba(34, 34, 34, 0.55);
+  color: #fdfdfd;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 178, 110, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(217, 178, 110, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 178, 110, 0);
+  }
 }
 
 .chip {
   padding: 10px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.55);
+  color: #f7f7f7;
   text-decoration: none;
   font-size: 13px;
   display: inline-flex;
