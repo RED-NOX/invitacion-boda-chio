@@ -2,19 +2,31 @@
   <header>
     <div class="topbar">
       <nav aria-label="Navegación">
-        <a href="#p1" data-nav="p1" :class="{ active: activePage === 'p1' }"
+        <a
+          href="#p1"
+          data-nav="p1"
+          :class="{ active: activePage === 'p1' }"
           @click="activePage = 'p1'"
           >Inicio</a
         >
-        <a href="#p2" data-nav="p2" :class="{ active: activePage === 'p2' }"
+        <a
+          href="#p2"
+          data-nav="p2"
+          :class="{ active: activePage === 'p2' }"
           @click="activePage = 'p2'"
           >Verso</a
         >
-        <a href="#p3" data-nav="p3" :class="{ active: activePage === 'p3' }"
+        <a
+          href="#p3"
+          data-nav="p3"
+          :class="{ active: activePage === 'p3' }"
           @click="activePage = 'p3'"
           >Detalles</a
         >
-        <a href="#p4" data-nav="p4" :class="{ active: activePage === 'p4' }"
+        <a
+          href="#p4"
+          data-nav="p4"
+          :class="{ active: activePage === 'p4' }"
           @click="activePage = 'p4'"
           >Ubicación</a
         >
@@ -69,7 +81,7 @@
     </section>
 
     <!-- PÁGINA 2 (verso) -->
-    <section class="page verse-page" id="p2" data-page>
+    <section class="verse-page" id="p2" data-page>
       <article class="card verse-card">
         <div class="card-inner" style="text-align: center">
           <h2 ref="verseRef" class="fade-verse"></h2>
@@ -173,7 +185,9 @@
     >
       <span aria-hidden="true">{{ isPlaying ? "⏸" : "▶" }}</span>
       <span>{{ isPlaying ? "Pausar música" : "Reproducir música" }}</span>
-      <small v-if="!musicUnlocked" class="chip-sub">Toca una vez para activar</small>
+      <small v-if="!musicUnlocked" class="chip-sub"
+        >Toca una vez para activar</small
+      >
     </button>
 
     <a class="chip" href="#p1" title="Volver arriba">Arriba</a>
@@ -551,7 +565,12 @@ nav a.active {
 #p1 {
   padding-bottom: 20%;
 }
-
+#p2 {
+  padding: 9% 10%;
+  scroll-snap-align: start;
+  align-items: center;
+  min-height: var(--h);
+}
 #p3 {
   padding-top: 10%;
 }
@@ -602,15 +621,28 @@ nav a.active {
 }
 
 .verse-page {
-  background: radial-gradient(120% 120% at 40% 10%, rgba(126, 224, 210, 0.08), transparent 55%),
-    radial-gradient(140% 140% at 80% 80%, rgba(217, 178, 110, 0.12), transparent 60%),
+  background:
+    radial-gradient(
+      120% 120% at 40% 10%,
+      rgba(126, 224, 210, 0.08),
+      transparent 55%
+    ),
+    radial-gradient(
+      140% 140% at 80% 80%,
+      rgba(217, 178, 110, 0.12),
+      transparent 60%
+    ),
     rgba(0, 0, 0, 0.02);
 }
 
 .verse-card {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(217, 178, 110, 0.24);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.14),
+    rgba(255, 255, 255, 0.06)
+  );
   min-height: min(520px, 90vh);
   display: grid;
   place-items: center;
@@ -740,7 +772,11 @@ p {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(120% 120% at 15% 10%, rgba(217, 178, 110, 0.18), transparent 50%);
+  background: radial-gradient(
+    120% 120% at 15% 10%,
+    rgba(217, 178, 110, 0.18),
+    transparent 50%
+  );
   pointer-events: none;
 }
 
