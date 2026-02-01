@@ -3,12 +3,19 @@
     <div class="topbar">
       <nav aria-label="Navegación">
         <a href="#p1" data-nav="p1" :class="{ active: activePage === 'p1' }"
+          @click="activePage = 'p1'"
           >Inicio</a
         >
+        <a href="#p2" data-nav="p2" :class="{ active: activePage === 'p2' }"
+          @click="activePage = 'p2'"
+          >Verso</a
+        >
         <a href="#p3" data-nav="p3" :class="{ active: activePage === 'p3' }"
+          @click="activePage = 'p3'"
           >Detalles</a
         >
         <a href="#p4" data-nav="p4" :class="{ active: activePage === 'p4' }"
+          @click="activePage = 'p4'"
           >Ubicación</a
         >
       </nav>
@@ -61,15 +68,18 @@
       </article>
     </section>
 
+    <!-- PÁGINA 2 (verso) -->
+    <section class="page verse-page" id="p2" data-page>
+      <article class="card verse-card">
+        <div class="card-inner" style="text-align: center">
+          <h2 ref="verseRef" class="fade-verse"></h2>
+        </div>
+      </article>
+    </section>
+
     <!-- PÁGINA 3 (stack) -->
     <section class="page stack" id="p3" data-page>
       <div class="stack-wrap">
-        <article class="card">
-          <div class="card-inner" style="text-align: center">
-            <h2 ref="verseRef" class="fade-verse"></h2>
-          </div>
-        </article>
-
         <article class="card">
           <div class="card-inner">
             <h2 style="text-align: center; color: var(--accent)">
@@ -173,7 +183,7 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, onBeforeUnmount, ref, nextTick, watch } from "vue";
 
 // ✅ Imágenes (ponlas en src/assets/img/)
 import diagonal1 from "@/assets/img/diagonal-1.png";
@@ -291,10 +301,19 @@ const typeVerseWithFade = (text, element) => {
 };
 
 // ===== Nav Observer =====
-const setupNavObserver = () => {
-  const root = scrollerRef.value;
-  if (!root) return;
+const resetVerse = () => {
+  if (verseRef.value) verseRef.value.innerHTML = "";
+};
 
+const triggerVerseAnimation = () => {
+  if (!verseRef.value) return;
+  resetVerse();
+  // Allow the DOM clear to flush so animations restart reliably
+  requestAnimationFrame(() => typeVerseWithFade(verseText, verseRef.value));
+};
+
+const setupNavObserver = () => {
+  const root = scrollerRef.value || null;
   const pages = [...document.querySelectorAll("[data-page]")];
 
   io = new IntersectionObserver(
@@ -306,17 +325,12 @@ const setupNavObserver = () => {
       if (!visible) return;
 
       activePage.value = visible.target.id;
-
-      if (
-        visible.target.id === "p3" &&
-        verseRef.value &&
-        !verseRef.value.dataset.loaded
-      ) {
-        typeVerseWithFade(verseText, verseRef.value);
-        verseRef.value.dataset.loaded = "true";
-      }
     },
-    { root, threshold: [0.55, 0.65, 0.75] },
+    {
+      root,
+      threshold: [0.3, 0.5, 0.7],
+      rootMargin: "-10% 0px -10% 0px",
+    },
   );
 
   pages.forEach((p) => io.observe(p));
@@ -416,6 +430,14 @@ onMounted(() => {
   countdownTimer = setInterval(formatCountdown, 1000 * 30);
 
   setupAudio();
+});
+
+watch(activePage, (val) => {
+  if (val === "p2") {
+    triggerVerseAnimation();
+  } else {
+    resetVerse();
+  }
 });
 
 onBeforeUnmount(() => {
@@ -531,7 +553,7 @@ nav a.active {
 }
 
 #p3 {
-  padding-top: 0%;
+  padding-top: 10%;
 }
 
 #p4 {
@@ -577,6 +599,22 @@ nav a.active {
   position: relative;
   z-index: 2;
   padding: clamp(18px, 3.2vw, 34px);
+}
+
+.verse-page {
+  background: radial-gradient(120% 120% at 40% 10%, rgba(126, 224, 210, 0.08), transparent 55%),
+    radial-gradient(140% 140% at 80% 80%, rgba(217, 178, 110, 0.12), transparent 60%),
+    rgba(0, 0, 0, 0.02);
+}
+
+.verse-card {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(217, 178, 110, 0.24);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  min-height: min(520px, 90vh);
+  display: grid;
+  place-items: center;
+  padding: clamp(22px, 4vw, 46px);
 }
 
 /* ============ Diagonales (fondo en p1) ============ */
@@ -1063,6 +1101,10 @@ p {
     padding-top: calc(22% + 16px);
   }
 
+  .verse-page {
+    padding-top: calc(18% + 16px);
+  }
+
   .page.stack {
     align-items: center;
   }
@@ -1072,11 +1114,11 @@ p {
   }
 
   #p3 {
-    padding-top: 20%;
+    padding-top: 18%;
   }
 
   #p4 {
-    padding-top: 18%;
+    padding-top: 16%;
   }
 
   .stack-wrap {
