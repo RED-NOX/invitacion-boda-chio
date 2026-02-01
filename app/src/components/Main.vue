@@ -148,12 +148,6 @@
             </div>
           </div>
         </article>
-
-        <article class="card">
-          <div class="card-inner" style="text-align: center">
-            <img id="Te-esperamos" :src="teEsperamos" alt="Te esperamos" />
-          </div>
-        </article>
       </div>
     </section>
   </main>
@@ -562,6 +556,7 @@ p {
   font-weight: normal;
   /* esta fuente solo tiene un peso */
   letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .grid {
@@ -782,6 +777,17 @@ p {
 }
 
 /* ============ Typewriter spans ============ */
+.tw {
+  font-family: "Great Vibes", cursive;
+  font-weight: normal;
+  /* esta fuente solo tiene un peso */
+  letter-spacing: 0.02em;
+  display: block;
+  text-align: center;
+  color: #d9b26e;
+  font-style: italic;
+}
+
 .tw span {
   opacity: 0;
   display: inline-block;
@@ -886,7 +892,7 @@ p {
   }
 
   #p1 {
-    padding-bottom: 12%;
+    padding-bottom: 20%;
   }
 
   #p3 {
