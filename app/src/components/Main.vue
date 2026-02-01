@@ -417,7 +417,7 @@ nav a.active {
 }
 .page {
   scroll-snap-align: start;
-  padding: calc(36% + 16px) var(--pad) var(--pad);
+  padding: calc(24% + 16px) var(--pad) var(--pad);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -444,7 +444,7 @@ nav a.active {
 }
 
 #p3 {
-  padding-top: 28%;
+  padding-top: 40%;
 }
 
 #p4 {
