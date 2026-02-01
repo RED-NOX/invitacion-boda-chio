@@ -109,7 +109,7 @@
               <div class="panel-padres parent-panel">
                 <p class="miniTitle parent-title">Padres de la Novia</p>
                 <div class="parent-names">
-                  <span>José Cazarin Linarez</span>
+                  <span>José Cazarin Linares</span>
                   <span class="ampersand">&</span>
                   <span>Candelaria Parada Domínguez</span>
                 </div>
